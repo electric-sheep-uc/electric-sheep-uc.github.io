@@ -48,13 +48,13 @@ as well as keeping the financial barrier into the league low.
 | Daniel Barry           | Merel Keijsers         |
 | ![](img/member-hk.png) | ![](img/member-ms.png) |
 | Humayun Khan           | Munir Shah             |
-| ![](img/member-bh.png) | ![](img/member-vp.png) |
-| Banon Hopman           | Victoria Pryde         |
-| ![](img/member-sh.png) |                        |
-| Seong-Young Her        |                        |
+| ![](img/member-bh.png) |                        |
+| Banon Hopman           |                        |
 
 Previous team members:
 
+* Victoria Pryde
+* Seong-Young Her
 * Hussain Syed Kazmi
 * Rory Clifford
 * Andrew Curtis-Black

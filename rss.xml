@@ -2,11 +2,11 @@
 <rss version="2.0">
 <channel>
   <title>Electric Sheep</title>
-  <link>https://humanoid.science</link>
+  <link>https://electric-sheep-uc.github.io</link>
   <description>Electric Sheep</description>
   <item>
     <title>Balance Engine</title>
-    <link>https://humanoid.science/blg/2022-01-31.html</link>
+    <link>https://electric-sheep-uc.github.io/blg/2022-01-31.html</link>
     <description><![CDATA[<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" dir="ltr">
 <head>
@@ -23,7 +23,7 @@
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
     ul.task-list{list-style: none;}
   </style>
-  <link rel="stylesheet" href="/media/dan/DATA/Documents/Projects/nz-dev/website/www/style.css" />
+  <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
 <p><img src="/img/logo-walk.gif" /></p>
@@ -68,9 +68,9 @@
 <iframe src="https://www.youtube.com/embed/xXvhSE1no1w" allowfullscreen>
 </iframe>
 <p><em>Video: RoboCup Dog platform in Japan (2009).</em></p>
-<p>Dogs are great as an initial platform - they are stable and <em>cute</em> <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>. Initial problems can be addressed regarding to team play, vision, communication, locomotion, etc, whilst offering fun and novel games for the public to engage with.</p>
+<p>Dogs are great as an initial platform - they are stable and <em>cute</em> <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>. Initial problems can be addressed with respect to team play, vision, communication, locomotion, etc, whilst offering fun and novel games for the public to engage with.</p>
 <p><del>Unfortunately</del> At some point it was decided that in order to achieve the goal of robots vs people in 2050, they must be bipedal. In 2013, the <a href="https://robocup.herts.ac.uk/">Bold Hearts</a> decided to switch from a successful run in the simulation league and enter into the humanoid league, which consists of hardware!</p>
-<p><em>Bipedal walking is hard.</em></p>
+<p><em>Turns out, bipedal walking is hard.</em></p>
 <p>Normally, for open-loop humanoid walking, we would have the open-loop walk send motor commands without any feedback. This worked well for flat surfaces with some walk engine parameter tweaking, and was appropriate in the domain space for quite some years. This in turn gave teams time to work on other advancements, such as vision and localisation.</p>
 <iframe src="https://www.youtube.com/embed/AoCVVbolh7E" allowfullscreen>
 </iframe>
@@ -113,6 +113,7 @@
 <img src="2022-01-31/simulation.png" alt="" /><figcaption>Gazebo simulation environment</figcaption>
 </figure>
 <p>(All going well) Going forwards, we intend to explore this research further with the intention of deploying it in Bangkok, Thailand, for the <a href="https://2022.robocup.org/">2022 RoboCup World Cup</a>.</p>
+<p><em>Keep tuned for future updates!</em></p>
 <section class="footnotes" role="doc-endnotes">
 <hr />
 <ol>
@@ -127,7 +128,7 @@
   </item>
   <item>
     <title>General Update</title>
-    <link>https://humanoid.science/blg/2021-12-19.html</link>
+    <link>https://electric-sheep-uc.github.io/blg/2021-12-19.html</link>
     <description><![CDATA[<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" dir="ltr">
 <head>
@@ -144,7 +145,7 @@
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
     ul.task-list{list-style: none;}
   </style>
-  <link rel="stylesheet" href="/media/dan/DATA/Documents/Projects/nz-dev/website/www/style.css" />
+  <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
 <p><img src="/img/logo-walk.gif" /></p>
@@ -227,7 +228,7 @@
   </item>
   <item>
     <title>General Update</title>
-    <link>https://humanoid.science/blg/2021-05-16.html</link>
+    <link>https://electric-sheep-uc.github.io/blg/2021-05-16.html</link>
     <description><![CDATA[<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" dir="ltr">
 <head>
@@ -244,7 +245,7 @@
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
     ul.task-list{list-style: none;}
   </style>
-  <link rel="stylesheet" href="/media/dan/DATA/Documents/Projects/nz-dev/website/www/style.css" />
+  <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
 <p><img src="/img/logo-walk.gif" /></p>
@@ -297,7 +298,7 @@
   </item>
   <item>
     <title>Project - PWM Motor (Part 5)</title>
-    <link>https://humanoid.science/blg/2021-05-01.html</link>
+    <link>https://electric-sheep-uc.github.io/blg/2021-05-01.html</link>
     <description><![CDATA[<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" dir="ltr">
 <head>
@@ -314,7 +315,7 @@
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
     ul.task-list{list-style: none;}
   </style>
-  <link rel="stylesheet" href="/media/dan/DATA/Documents/Projects/nz-dev/website/www/style.css" />
+  <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
 <p><img src="/img/logo-walk.gif" /></p>
@@ -373,7 +374,7 @@
   </item>
   <item>
     <title>Torso Design</title>
-    <link>https://humanoid.science/blg/2021-04-28.html</link>
+    <link>https://electric-sheep-uc.github.io/blg/2021-04-28.html</link>
     <description><![CDATA[<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" dir="ltr">
 <head>
@@ -390,7 +391,7 @@
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
     ul.task-list{list-style: none;}
   </style>
-  <link rel="stylesheet" href="/media/dan/DATA/Documents/Projects/nz-dev/website/www/style.css" />
+  <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
 <p><img src="/img/logo-walk.gif" /></p>
@@ -458,7 +459,7 @@
   </item>
   <item>
     <title>Project - PWM Motor (Part 4)</title>
-    <link>https://humanoid.science/blg/2021-04-26.html</link>
+    <link>https://electric-sheep-uc.github.io/blg/2021-04-26.html</link>
     <description><![CDATA[<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" dir="ltr">
 <head>
@@ -475,7 +476,7 @@
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
     ul.task-list{list-style: none;}
   </style>
-  <link rel="stylesheet" href="/media/dan/DATA/Documents/Projects/nz-dev/website/www/style.css" />
+  <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
 <p><img src="/img/logo-walk.gif" /></p>
@@ -557,7 +558,7 @@
   </item>
   <item>
     <title>Project - PWM Motor (Part 3)</title>
-    <link>https://humanoid.science/blg/2021-04-18.html</link>
+    <link>https://electric-sheep-uc.github.io/blg/2021-04-18.html</link>
     <description><![CDATA[<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" dir="ltr">
 <head>
@@ -574,7 +575,7 @@
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
     ul.task-list{list-style: none;}
   </style>
-  <link rel="stylesheet" href="/media/dan/DATA/Documents/Projects/nz-dev/website/www/style.css" />
+  <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
 <p><img src="/img/logo-walk.gif" /></p>
@@ -633,7 +634,7 @@
   </item>
   <item>
     <title>Project - PWM Motor (Part 2)</title>
-    <link>https://humanoid.science/blg/2021-04-12.html</link>
+    <link>https://electric-sheep-uc.github.io/blg/2021-04-12.html</link>
     <description><![CDATA[<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" dir="ltr">
 <head>
@@ -650,7 +651,7 @@
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
     ul.task-list{list-style: none;}
   </style>
-  <link rel="stylesheet" href="/media/dan/DATA/Documents/Projects/nz-dev/website/www/style.css" />
+  <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
 <p><img src="/img/logo-walk.gif" /></p>
@@ -705,7 +706,7 @@
   </item>
   <item>
     <title>Project - PWM Motor</title>
-    <link>https://humanoid.science/blg/2021-04-04.html</link>
+    <link>https://electric-sheep-uc.github.io/blg/2021-04-04.html</link>
     <description><![CDATA[<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" dir="ltr">
 <head>
@@ -722,7 +723,7 @@
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
     ul.task-list{list-style: none;}
   </style>
-  <link rel="stylesheet" href="/media/dan/DATA/Documents/Projects/nz-dev/website/www/style.css" />
+  <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
 <p><img src="/img/logo-walk.gif" /></p>
@@ -777,7 +778,7 @@
   </item>
   <item>
     <title>Update - Walk Test</title>
-    <link>https://humanoid.science/blg/2020-03-08.html</link>
+    <link>https://electric-sheep-uc.github.io/blg/2020-03-08.html</link>
     <description><![CDATA[<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" dir="ltr">
 <head>
@@ -794,7 +795,7 @@
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
     ul.task-list{list-style: none;}
   </style>
-  <link rel="stylesheet" href="/media/dan/DATA/Documents/Projects/nz-dev/website/www/style.css" />
+  <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
 <p><img src="/img/logo-walk.gif" /></p>
@@ -840,7 +841,7 @@
   </item>
   <item>
     <title>Update - Leg Build</title>
-    <link>https://humanoid.science/blg/2020-01-30.html</link>
+    <link>https://electric-sheep-uc.github.io/blg/2020-01-30.html</link>
     <description><![CDATA[<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" dir="ltr">
 <head>
@@ -857,7 +858,7 @@
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
     ul.task-list{list-style: none;}
   </style>
-  <link rel="stylesheet" href="/media/dan/DATA/Documents/Projects/nz-dev/website/www/style.css" />
+  <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
 <p><img src="/img/logo-walk.gif" /></p>
@@ -903,7 +904,7 @@
   </item>
   <item>
     <title>Update - Leg Design</title>
-    <link>https://humanoid.science/blg/2020-01-29.html</link>
+    <link>https://electric-sheep-uc.github.io/blg/2020-01-29.html</link>
     <description><![CDATA[<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" dir="ltr">
 <head>
@@ -920,7 +921,7 @@
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
     ul.task-list{list-style: none;}
   </style>
-  <link rel="stylesheet" href="/media/dan/DATA/Documents/Projects/nz-dev/website/www/style.css" />
+  <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
 <p><img src="/img/logo-walk.gif" /></p>
@@ -966,7 +967,7 @@
   </item>
   <item>
     <title>Qualification 2020 Preparation</title>
-    <link>https://humanoid.science/blg/2019-10-20.html</link>
+    <link>https://electric-sheep-uc.github.io/blg/2019-10-20.html</link>
     <description><![CDATA[<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" dir="ltr">
 <head>
@@ -983,7 +984,7 @@
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
     ul.task-list{list-style: none;}
   </style>
-  <link rel="stylesheet" href="/media/dan/DATA/Documents/Projects/nz-dev/website/www/style.css" />
+  <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
 <p><img src="/img/logo-walk.gif" /></p>
@@ -1049,7 +1050,7 @@
   </item>
   <item>
     <title>Qualification 2019</title>
-    <link>https://humanoid.science/blg/2018-12-06.html</link>
+    <link>https://electric-sheep-uc.github.io/blg/2018-12-06.html</link>
     <description><![CDATA[<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" dir="ltr">
 <head>
@@ -1066,7 +1067,7 @@
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
     ul.task-list{list-style: none;}
   </style>
-  <link rel="stylesheet" href="/media/dan/DATA/Documents/Projects/nz-dev/website/www/style.css" />
+  <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
 <p><img src="/img/logo-walk.gif" /></p>
@@ -1116,7 +1117,7 @@
   </item>
   <item>
     <title>Hardware</title>
-    <link>https://humanoid.science/blg/2018-06-03.html</link>
+    <link>https://electric-sheep-uc.github.io/blg/2018-06-03.html</link>
     <description><![CDATA[<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" dir="ltr">
 <head>
@@ -1133,7 +1134,7 @@
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
     ul.task-list{list-style: none;}
   </style>
-  <link rel="stylesheet" href="/media/dan/DATA/Documents/Projects/nz-dev/website/www/style.css" />
+  <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
 <p><img src="/img/logo-walk.gif" /></p>
@@ -1205,7 +1206,7 @@
   </item>
   <item>
     <title>Funding</title>
-    <link>https://humanoid.science/blg/2018-02-12.html</link>
+    <link>https://electric-sheep-uc.github.io/blg/2018-02-12.html</link>
     <description><![CDATA[<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" dir="ltr">
 <head>
@@ -1222,7 +1223,7 @@
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
     ul.task-list{list-style: none;}
   </style>
-  <link rel="stylesheet" href="/media/dan/DATA/Documents/Projects/nz-dev/website/www/style.css" />
+  <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
 <p><img src="/img/logo-walk.gif" /></p>
