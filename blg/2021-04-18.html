@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="keywords" content="Electric, Sheep, RoboCup, Humanoid" />
+  <title>Electric Sheep</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <link rel="stylesheet" href="/media/dan/DATA/Documents/Projects/nz-dev/website/www/style.css" />
+</head>
+<body>
+<p><img src="/img/logo-walk.gif" /></p>
+<ul class="n">
+<li class="n">
+<a class="n" href="/index.html#">Home</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#blogs">Blogs</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#about-team">About Team</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#team-members">Team Members</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#achievements">Achievements</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#releases">Releases</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#press">Press</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#contact-us">Contact Us</a>
+</li>
+<li class="n">
+<a class="n" href="/rss.xml">RSS</a>
+</li>
+</ul>
+<header id="title-block-header">
+<h1 class="title">Electric Sheep</h1>
+</header>
+<h2 id="project---pwm-motor-part-3">Project - PWM Motor (Part 3)</h2>
+<p><code>Last Modfified: 2021-04-18</code></p>
+<p>Following up from <a href="/blg/2021-04-12.html">last week</a>, there have been a few more updates! Progress on the low-cost motor controller are going well.</p>
+<p>The software control has essentially gone as far as it can without real hardware to test with. We have basic functionality for PING, READ and WRITE of motor values. We are able to read the motor position, but are not able to control the motor due to the legacy MOSFET circuitry. Some new, more powerful MOSFETs have been ordered and are on their way.</p>
+<p>The bugs with the software control have been hunted down - in the end it turned out that <code>0x00</code> and <code>0x0A</code> bytes break the serial USB protocol for a yet to be determined reason. This is not a problem for the real serial interface we will use, as this has no such software limitations.</p>
+<figure>
+<img src="2021-04-18/pcb-layout.png" alt="" /><figcaption>Kicad PCB layout</figcaption>
+</figure>
+<p>As you can see, progress has been made on the PCB for the new motor controller, with the basic circuitry now planned. We have been using <a href="https://xess.com/skidl">skidl</a> for programmatically generating and validating circuits - and then using Kicad to place the components. After this we then use <a href="https://github.com/freerouting/freerouting">freerouting</a> to automate the routing process between the components.</p>
+<figure>
+<img src="2021-04-18/front-render.png" alt="" /><figcaption>3D render of top</figcaption>
+</figure>
+<p>Packing all the components onto a single 2-layer PCB has been quite tough, with both sides being jam packed to fit within the profile of the existing motor chassis. It’s only <em>just about</em> even possible! There are still some challenges to be solved before the PCB can be sent off to a manufacturer, but it’s expected this could happen as early as next week.</p>
+<p>As you can see, very important sheep art was also added to the PCB!</p>
+<figure>
+<img src="2021-04-18/rear-render.png" alt="" /><figcaption>3D render of back</figcaption>
+</figure>
+<p>We look forward to providing more updates in the near future!</p>
+</body>
+</html>

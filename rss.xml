@@ -1,0 +1,1281 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+<channel>
+  <title>Electric Sheep</title>
+  <link>https://humanoid.science</link>
+  <description>Electric Sheep</description>
+  <item>
+    <title>Balance Engine</title>
+    <link>https://humanoid.science/blg/2022-01-31.html</link>
+    <description><![CDATA[<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="keywords" content="Electric, Sheep, RoboCup, Humanoid" />
+  <title>Electric Sheep</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <link rel="stylesheet" href="/media/dan/DATA/Documents/Projects/nz-dev/website/www/style.css" />
+</head>
+<body>
+<p><img src="/img/logo-walk.gif" /></p>
+<ul class="n">
+<li class="n">
+<a class="n" href="/index.html#">Home</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#blogs">Blogs</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#about-team">About Team</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#team-members">Team Members</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#achievements">Achievements</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#releases">Releases</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#press">Press</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#contact-us">Contact Us</a>
+</li>
+<li class="n">
+<a class="n" href="/rss.xml">RSS</a>
+</li>
+</ul>
+<header id="title-block-header">
+<h1 class="title">Electric Sheep</h1>
+</header>
+<h2 id="balance-engine">Balance Engine</h2>
+<p><code>Last Modfified: 2022-01-31</code></p>
+<p><strong>Note:</strong> This article is a high-level discussion of a technical nature (in comparison to other articles). We keep the discussion somewhat abstract but it may still prove difficult to follow.</p>
+<p>As eluded to in the previous <a href="2021-12-19.html">general update</a>, we are making awesome progress since the last update over the Christmas period. One of the projects we will discuss today is the concept of a <em>balance engine</em> and some of the work that has happened around this.</p>
+<h3 id="brief-history-of-robocup-walking">Brief History of RoboCup Walking</h3>
+<p><em>In the beginning, there were robot dogs…</em></p>
+<iframe src="https://www.youtube.com/embed/xXvhSE1no1w" allowfullscreen>
+</iframe>
+<p><em>Video: RoboCup Dog platform in Japan (2009).</em></p>
+<p>Dogs are great as an initial platform - they are stable and <em>cute</em> <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>. Initial problems can be addressed regarding to team play, vision, communication, locomotion, etc, whilst offering fun and novel games for the public to engage with.</p>
+<p><del>Unfortunately</del> At some point it was decided that in order to achieve the goal of robots vs people in 2050, they must be bipedal. In 2013, the <a href="https://robocup.herts.ac.uk/">Bold Hearts</a> decided to switch from a successful run in the simulation league and enter into the humanoid league, which consists of hardware!</p>
+<p><em>Bipedal walking is hard.</em></p>
+<p>Normally, for open-loop humanoid walking, we would have the open-loop walk send motor commands without any feedback. This worked well for flat surfaces with some walk engine parameter tweaking, and was appropriate in the domain space for quite some years. This in turn gave teams time to work on other advancements, such as vision and localisation.</p>
+<iframe src="https://www.youtube.com/embed/AoCVVbolh7E" allowfullscreen>
+</iframe>
+<p><em>Video: Bold Hearts DarwinOp player using an open-loop walk engine on a flat surface (2013).</em></p>
+<p>This was never the <a href="https://robocup.org/objective">end-goal</a> though, and some years ago the challenge of walking was made more difficult with the additional of artificial grass. This made the challenge of humanoid walking much more difficult. For the first year of this rule change, very few teams could walk reliably towards the ball. Of course, teams arose to the challenge and in the next year most teams could walk somewhat reliably.</p>
+<iframe src="https://www.youtube.com/embed/CaZP5I9xwUw" allowfullscreen>
+</iframe>
+<p><em>Video: Bold Hearts (modified) DarwinOp player using an open-loop walk engine on artificial grass (2018).</em></p>
+<p>As can be seen, the Bold Hearts and Electric Sheep teams (amongst others) have utilized open-loop walk engines to achieve limited stability walking on artificial grass. Typically this would involve tweaking per-robot walking parameters for the particular field we intend to play on. We found that as the robots became larger and their centre of mass was heightened, the issue of stability became much more difficult.</p>
+<iframe src="https://www.youtube.com/embed/Y9JFQmkmr_A" allowfullscreen>
+</iframe>
+<p><em>Video: Electric Sheep player using an open-loop walk engine on artificial grass (2020).</em></p>
+<p>As some teams find moderate success in continuing to tweak their walk parameters, other teams turned to tried-and-true existing methods such as <a href="https://en.wikipedia.org/wiki/Zero_moment_point">zero moment point</a> (ZMP). ZMP is quite an old well-tested approach and makes the assumption that you are able to calculate centre of pressure (CoP), which can then be abstracted to centre of mass (CoM), which is projected to be always within the ‘support polygon’ (an area defined by the placement of the feet). ZMP works well, and in theory could allow for behaviours such as walking, running, and even jumping - although there has so far been limited success in these behaviours (at least within the league).</p>
+<h3 id="challenges">Challenges</h3>
+<p>There are several challenges we face in the RoboCup humanoid league that differentiate us from other research approaches:</p>
+<ul>
+<li><strong>Real-time</strong> - One of the major challenges RoboCup teams face is that this problem of walking must be solved live, autonomously, on the robot itself. Typically the computation resembles something like a modern Raspberry Pi due to size, weight and power requirements of specific platforms. Many research approaches will use tonnes of computation outside of the robot itself, a luxury we do not have.</li>
+<li><strong>Objective</strong> - Maintaining balance whilst doing some walk behaviour is cool, but not in itself useful. The goal of our agents is not to balance a walk, but actually to play football. Therefore it is not enough for them to simply be stable, they must also be achieving their main objective.</li>
+<li><strong>Environment</strong> - Our robots are not operating in some well known, well tested lab - they instead operate on a football pitch made of artificial grass, unknown until the week of the competition. Teams have just a few days to calibrate their robots, fix any issues and then play competition matches.</li>
+</ul>
+<p>Going further, ZMP only really solves behaviours where a support polygon can be well defined. What if, for example, you wanted to do a flip, perform actions on uneven or unknown terrain, etc? Modified versions of ZMP could in theory handle much more complex scenarios, but these solutions become more complex and much harder to define.</p>
+<h3 id="a-new-approach">A New Approach</h3>
+<p>What we are beginning to ask for is a <em>motion engine</em>, an engine that can solve arbitrarily difficult motion tasks <a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>. This remains the goal of future work, so for now we work on a subset of this problem, which is an <em>adaptive balance engine</em> (ABE).</p>
+<p>The intention of ABE is to take the suggestion of an open-loop walk engine, adapt it in a way that provides stability, and then send the motor commands. This does not rely on foot sensors, we do not provide any parameters to the walk engine and <em>theoretically</em> we are not bound by the idea of a support polygon, allowing for momentary instability if required.</p>
+<p>We intend to publish more details about this approach at a later date.</p>
+<h3 id="initial-results">Initial Results</h3>
+<p>Our initial experiments were conducted using the <a href="https://gym.openai.com/envs/CartPole-v1/">OpenAI Gym cartpole problem</a>, where the agent has the ability to select <code>left</code> or <code>right</code> in each time step depending on some observed state, which includes the cart position, velocity, pole angle and pole velocity. Simulations end when the agent falls outside of some defined bounds.</p>
+<figure>
+<img src="2022-01-31/cartpole.png" alt="" /><figcaption>OpenAI Gym cartpole simulation</figcaption>
+</figure>
+<p>Other approaches <a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>, mostly consisting of <a href="https://gym.openai.com/envs/CartPole-v0/">reinforcement learning</a> (RL) are slower to learn than our ABE approach. Most RL approaches appear to be based on <a href="https://deepmind.com/research/open-source/dqn">DeepMind’s DQN model</a> from 2015. Our approach is somewhat more computationally expensive, but yields very competitive results.</p>
+<figure>
+<img src="2022-01-31/scores.png" alt="" /><figcaption>Preliminary results of our algorithm</figcaption>
+</figure>
+<p>As you can see, it takes approximately 40 experiments for the agent to ‘solve’ the problem maximally with a consistent score of 500 <a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a>.</p>
+<p><strong>Note:</strong> Due to the implementation, there is a 1% chance that the agent takes a random action. This is for the purpose of training.</p>
+<h3 id="further-work">Further Work</h3>
+<p>With the initial results showing promise, we now move into the <a href="https://gitlab.com/boldhearts">humanoid simulation environment created by the Bold Hearts</a>. Their platform is based on <a href="https://arxiv.org/abs/1907.00282">ROS2</a>, which offers some nice abstractions and allows for code sharing. This allows us to flesh out the concept whilst minimizing damage to real hardware, as well as offering the ability to pre-train the algorithm and minimize time spent on hardware.</p>
+<figure>
+<img src="2022-01-31/simulation.png" alt="" /><figcaption>Gazebo simulation environment</figcaption>
+</figure>
+<p>(All going well) Going forwards, we intend to explore this research further with the intention of deploying it in Bangkok, Thailand, for the <a href="https://2022.robocup.org/">2022 RoboCup World Cup</a>.</p>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>Aesthetically pleasing robots are quite important, especially as by design these competitions are conducted with lots of public engagement.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>This is the subject of a high-level discussion journal paper.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3" role="doc-endnote"><p>Note: We only discuss those that have released their source, as the cartpole problem is technically <a href="https://link.medium.com/47hKaTmOFmb">optimally solvable</a>.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4" role="doc-endnote"><p>A score of 500 is far better than is required, the ‘win’ scenario is set to 195.<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+</body>
+</html>]]></description>
+  </item>
+  <item>
+    <title>General Update</title>
+    <link>https://humanoid.science/blg/2021-12-19.html</link>
+    <description><![CDATA[<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="keywords" content="Electric, Sheep, RoboCup, Humanoid" />
+  <title>Electric Sheep</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <link rel="stylesheet" href="/media/dan/DATA/Documents/Projects/nz-dev/website/www/style.css" />
+</head>
+<body>
+<p><img src="/img/logo-walk.gif" /></p>
+<ul class="n">
+<li class="n">
+<a class="n" href="/index.html#">Home</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#blogs">Blogs</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#about-team">About Team</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#team-members">Team Members</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#achievements">Achievements</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#releases">Releases</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#press">Press</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#contact-us">Contact Us</a>
+</li>
+<li class="n">
+<a class="n" href="/rss.xml">RSS</a>
+</li>
+</ul>
+<header id="title-block-header">
+<h1 class="title">Electric Sheep</h1>
+</header>
+<h2 id="general-update">General Update</h2>
+<p><code>Last Modfified: 2021-12-19</code></p>
+<p><em>What a year it has been!</em> In the months since we <a href="2021-05-16.html">last updated</a> you, a few things have happened for the team.</p>
+<h3 id="qualification">Qualification</h3>
+<p>The <a href="2019-10-20.html">last qualification submission</a> we submitted was in 2019<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> for an in-person competition for 2020, Bordeaux, France. Encase you have been hiding under a moon rock, that was <em>slightly</em> impacted by this <em>little-known</em> global pandemic event, and the in-person event was postponed till 2021. It may not be too much of a surprise to learn that in 2021 the situation could still not be described as ‘ideal’, and unfortunately the in-person event was postponed by a year again.</p>
+<p>The intention now is that for 2022, the <a href="https://2022.robocup.org/">competition be held in Bangkok, Thailand</a> - from the 11th to 17th of July. As the <a href="https://2022.robocup.org/covid-19-situation/">website states</a>, travelling during these times is far from easy and it’s yet to be seen how the travel restrictions change in response to the new Omicron variant.</p>
+<p>We are proud to announce our intention to collaborate with the <a href="https://robocup.herts.ac.uk/">Bold Hearts</a>, a well-established team from the UK. Dependant on travel restrictions, funding, personal commitments and some unforeseen issues, we intend to join them in the 2022 competition (and of course win!).</p>
+<iframe src="https://www.youtube.com/embed/xdqDjWm3Hfg" allowfullscreen>
+</iframe>
+<p>This somewhat addresses the issue of team members for each team and also reduces the funding requirement for our team.</p>
+<p><em>Fingers crossed for the qualification process!</em></p>
+<h3 id="projects">Projects</h3>
+<p>The following are some notes regarding ongoing projects, we intend to update these in more detail at a later date.</p>
+<h4 id="hardware">Hardware</h4>
+<p>The <a href="2021-05-01.html">PWM motor project</a> is currently on hold due to time constraints, but we intend to pick up this investigation soon. The possibility of a low-cost motor that we have a considerable amount of control over is quite exciting, especially as existing options have left a lot to be desired in terms of cost and performance!</p>
+<p>We intend to continue using our humanoid platform for the purpose of research, and as such will continue making upgrades. This includes continuing the investigation into the <a href="2021-04-28.html">torso structure</a>. The intention is that we can also use the lessons learned here in order to enhance the Bold Heart’s humanoid platform too.</p>
+<h4 id="balance-engine">Balance Engine</h4>
+<p>Something that we discussed in our original team description paper (TDP) for the 2019 competition in Sydney Australia, was our intention “<a href="/bin/tdp-2019-b.pdf">to experiment with specifying an end-target pose as an input <del>and</del> to a motion engine, which computes a pose for the next time step</a>”. In collaboration with the Bold Hearts we intend to implement the first step of this through the use of a <em>balance engine</em>, a subset of the <em>motion engine</em> problem space.</p>
+<figure>
+<img src="2021-12-19/scores.png" alt="" /><figcaption>Cartpole custom control algorithm</figcaption>
+</figure>
+<p>Initial results based on the <a href="https://gsurma.medium.com/cartpole-introduction-to-reinforcement-learning-ed0eb5b58288">‘cartpole’ problem</a> (essentially an inverse pendulum for testing non-linear control algorithms) have allowed us to validate some of the core concepts for this idea. It’s looking promising and we will likely be looking at exploring the control of a humanoid robot over Christmas.</p>
+<h4 id="vision">Vision</h4>
+<p>We intend to implement an iteration of our <a href="/bin/xyolo-2019.pdf">xYOLO CNN</a> in ROS2 that also detects field lines, and various other objects. The intention is that these can then play a large part in higher-level behaviour of the robot.</p>
+<figure>
+<img src="2021-12-19/predict.jpg" alt="" /><figcaption>xYOLO extended to predict other field objects</figcaption>
+</figure>
+<p>There are still some nice ideas for a version 2 of this network, time permitting we intend to investigate this space more. Since we published this paper, there have been two iterations of the original YOLO v3 named v4 and v5 - both of which feature some interesting work that can be applied to our network also.</p>
+<figure>
+<img src="2021-12-19/xYOLO.png" alt="" /><figcaption>Network structure of xYOLO</figcaption>
+</figure>
+<h4 id="localisation">Localisation</h4>
+<p>We also look towards investigating the localisation approach somewhat more starting in January now that we finally have features (lines, etc) that can be used for the localisation process. There are still some open problems yet to be solved, but we are relatively confident that we should be able to address these in time for the competition.</p>
+<h3 id="final-notes">Final Notes</h3>
+<p>The Electric Sheep wish everybody well, a Merry Christmas and a Happy New Year!</p>
+<p><em>Keep tuned for future updates!</em></p>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p><em>Yes, it really has been <strong>2 years</strong> since then!</em><a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+</body>
+</html>]]></description>
+  </item>
+  <item>
+    <title>General Update</title>
+    <link>https://humanoid.science/blg/2021-05-16.html</link>
+    <description><![CDATA[<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="keywords" content="Electric, Sheep, RoboCup, Humanoid" />
+  <title>Electric Sheep</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <link rel="stylesheet" href="/media/dan/DATA/Documents/Projects/nz-dev/website/www/style.css" />
+</head>
+<body>
+<p><img src="/img/logo-walk.gif" /></p>
+<ul class="n">
+<li class="n">
+<a class="n" href="/index.html#">Home</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#blogs">Blogs</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#about-team">About Team</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#team-members">Team Members</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#achievements">Achievements</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#releases">Releases</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#press">Press</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#contact-us">Contact Us</a>
+</li>
+<li class="n">
+<a class="n" href="/rss.xml">RSS</a>
+</li>
+</ul>
+<header id="title-block-header">
+<h1 class="title">Electric Sheep</h1>
+</header>
+<h2 id="general-update">General Update</h2>
+<p><code>Last Modfified: 2021-05-16</code></p>
+<p>The team have been very busy over the past weeks on various projects - so this is a small update from us. We hope to provide larger updates in the coming weeks.</p>
+<figure>
+<img src="2021-05-16/motor-parts.jpg" alt="" /><figcaption>Motor controller parts</figcaption>
+</figure>
+<p>Some parts finally arrived! Pictured are the power transistors, DC barrel jacks, voltage regulators and ATtiny85 controllers. This means that we can begin validating the controller boards that arrived quite some time ago.</p>
+<figure>
+<img src="2021-05-16/badges.jpg" alt="" /><figcaption>Electric Sheep merch</figcaption>
+</figure>
+<p>We have been making use of the <a href="https://canterbury.libguides.com/makerspace">maker space</a> on campus, located in the library. Amongst various facilities, we made use of their badge machines to make some sheep themed handouts. In the future we intended to make use of their shirt printing facilities and their sewing machines for robot t-shirts!</p>
+<p>Check back when we blow up some stuff in our testing!</p>
+</body>
+</html>]]></description>
+  </item>
+  <item>
+    <title>Project - PWM Motor (Part 5)</title>
+    <link>https://humanoid.science/blg/2021-05-01.html</link>
+    <description><![CDATA[<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="keywords" content="Electric, Sheep, RoboCup, Humanoid" />
+  <title>Electric Sheep</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <link rel="stylesheet" href="/media/dan/DATA/Documents/Projects/nz-dev/website/www/style.css" />
+</head>
+<body>
+<p><img src="/img/logo-walk.gif" /></p>
+<ul class="n">
+<li class="n">
+<a class="n" href="/index.html#">Home</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#blogs">Blogs</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#about-team">About Team</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#team-members">Team Members</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#achievements">Achievements</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#releases">Releases</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#press">Press</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#contact-us">Contact Us</a>
+</li>
+<li class="n">
+<a class="n" href="/rss.xml">RSS</a>
+</li>
+</ul>
+<header id="title-block-header">
+<h1 class="title">Electric Sheep</h1>
+</header>
+<h2 id="project---pwm-motor-part-5">Project - PWM Motor (Part 5)</h2>
+<p><code>Last Modfified: 2021-05-01</code></p>
+<p>This update is a continuation of the PWM <a href="/blg/2021-04-26.html">motor project</a>. The goal of the project is to create a new controller board for standard PWM motors that add advanced capabilities and increased motor torque.</p>
+<p>Some PCBs finally arrived! Here are some images (apologies for the potato camera pictures):</p>
+<figure>
+<img src="2021-05-01/pcb-front.jpg" alt="" /><figcaption>Front of the PCB</figcaption>
+</figure>
+<p>The boards look really nice and came out exactly as planned. They even fit the motor housing nicely with the rounded corners avoiding the screws well.</p>
+<figure>
+<img src="2021-05-01/pcb-back.jpg" alt="" /><figcaption>Back of the PCB</figcaption>
+</figure>
+<p>An initial review of the board:</p>
+<ul>
+<li>The 3-pin connector will be very tough to solder, it was difficult to see on the schematic how tight the tolerances would be. Even the smallest amount of solder that goes somewhere it should will cause a short on those pins. Still, we will see how easily I can solder it.</li>
+<li>The traces are really not that large at all, we will for sure need to test how much current they can carry. This will mean testing a board to destruction.</li>
+<li>We are on the very edge of how close the through-holes can be to the edge of the PCB. This of course raises questions about where a programming header could possibly be attached.</li>
+</ul>
+<p>We still await for some circuit components to arrive, so until then we can do current tests and ensure the board is wired up correctly. Stay tuned for future updates!</p>
+</body>
+</html>]]></description>
+  </item>
+  <item>
+    <title>Torso Design</title>
+    <link>https://humanoid.science/blg/2021-04-28.html</link>
+    <description><![CDATA[<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="keywords" content="Electric, Sheep, RoboCup, Humanoid" />
+  <title>Electric Sheep</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <link rel="stylesheet" href="/media/dan/DATA/Documents/Projects/nz-dev/website/www/style.css" />
+</head>
+<body>
+<p><img src="/img/logo-walk.gif" /></p>
+<ul class="n">
+<li class="n">
+<a class="n" href="/index.html#">Home</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#blogs">Blogs</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#about-team">About Team</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#team-members">Team Members</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#achievements">Achievements</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#releases">Releases</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#press">Press</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#contact-us">Contact Us</a>
+</li>
+<li class="n">
+<a class="n" href="/rss.xml">RSS</a>
+</li>
+</ul>
+<header id="title-block-header">
+<h1 class="title">Electric Sheep</h1>
+</header>
+<h2 id="torso-design">Torso Design</h2>
+<p><code>Last Modfified: 2021-04-28</code></p>
+<p>Due to the ongoing COVID situation things have been a little different last year and this year, with teams having to adapt and work remotely. One of the many benefits of living in New Zealand has been the successful quarantine measures, meaning the team has been able to continue to meet on a regular basis.</p>
+<p>This year the competition will be virtual, and as such, has allowed us a unique opportunity to improve the humanoid and go after harder to reach goals. One of these investments has been a computation-based redesign of the humanoid structure.</p>
+<figure>
+<img src="2021-04-28/torso-scad.png" alt="" /><figcaption>OpenSCAD torso design</figcaption>
+</figure>
+<p>The original torso was coded by hand in OpenSCAD, a language to define 3D shapes. This got us to the competition in Sydney, Australia 2019, but was far from perfect. It was heavy, weak, hard to work on (you had to break the torso apart to rewire it), didn’t allow for great manoeuvrability - and a long list of other problems.</p>
+<p>Great work was done to port the models into a 3D CAD software and they were incrementally improved, smoothed, strengthened and redesigned. These parts were far superior to the original parts, but required many more hours of work to make even small adjustments.</p>
+<p>This got us thinking: <em>What if we could get a computer to do all the work?</em></p>
+<figure>
+<img src="2021-04-28/torso-v8.JPG" alt="" /><figcaption>Torso definition</figcaption>
+</figure>
+<p>The idea is that we define a set of rules for the 3D model and let the computer design the torso for us. This method is called <a href="https://en.wikipedia.org/wiki/Generative_Design"><em>generative design</em></a> and various CAD solutions have been around for years, with it only recently becoming accessible for free on a student license.</p>
+<figure>
+<img src="2021-04-28/torso-v2.JPG" alt="" /><figcaption>Torso design</figcaption>
+</figure>
+<p>As you can see, some of the design outputs are much harder-edged and others look much more organic.</p>
+<figure>
+<img src="2021-04-28/torso-v3.JPG" alt="" /><figcaption>Another torso design</figcaption>
+</figure>
+<p>Some of these designs are getting increasingly more human-like!</p>
+<p>Clearly more work is needed in order to better define restrictions to the models, it’s not usually used for objects with such complexity. We do believe however that the initial results are very promising and there could well be a viable path forwards with this approach.</p>
+<figure>
+<img src="2021-04-28/torso-v7.JPG" alt="" /><figcaption>And another</figcaption>
+</figure>
+<p>Subscribe to the RSS feed for further updates!</p>
+</body>
+</html>]]></description>
+  </item>
+  <item>
+    <title>Project - PWM Motor (Part 4)</title>
+    <link>https://humanoid.science/blg/2021-04-26.html</link>
+    <description><![CDATA[<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="keywords" content="Electric, Sheep, RoboCup, Humanoid" />
+  <title>Electric Sheep</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <link rel="stylesheet" href="/media/dan/DATA/Documents/Projects/nz-dev/website/www/style.css" />
+</head>
+<body>
+<p><img src="/img/logo-walk.gif" /></p>
+<ul class="n">
+<li class="n">
+<a class="n" href="/index.html#">Home</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#blogs">Blogs</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#about-team">About Team</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#team-members">Team Members</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#achievements">Achievements</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#releases">Releases</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#press">Press</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#contact-us">Contact Us</a>
+</li>
+<li class="n">
+<a class="n" href="/rss.xml">RSS</a>
+</li>
+</ul>
+<header id="title-block-header">
+<h1 class="title">Electric Sheep</h1>
+</header>
+<h2 id="project---pwm-motor-part-4">Project - PWM Motor (Part 4)</h2>
+<p><code>Last Modfified: 2021-04-26</code></p>
+<p>Another week, another update! Following up from the <a href="/blg/2021-04-18.html">previous update</a>, we have some more progress.</p>
+<p>Below is the final images for the v0.1 PCB design. The outside PCB trace is now set correctly, meaning the 3D rendering process displays the board correctly. As a result of this, the auto-routing software had a proper boundary to work with and was therefore able to find better solutions to the routing problem.</p>
+<figure>
+<img src="2021-04-26/kicad-v1.jpg" alt="" /><figcaption>Kicad layers</figcaption>
+</figure>
+<p>The board itself has been through several automated validation processes and <em>in theory</em> should work in the most basic sense of the word.</p>
+<figure>
+<img src="2021-04-26/3d-front.jpg" alt="" /><figcaption>Kicad’s front rendering</figcaption>
+</figure>
+<figure>
+<img src="2021-04-26/3d-back.jpg" alt="" /><figcaption>Kicad’s rear rendering</figcaption>
+</figure>
+<p>After finally getting this right, we sent the first version of the boards off to be manufactured! We already know that there will be some problems with this board:</p>
+<ul>
+<li>No programming method (we need to be able to load code onto the board).</li>
+<li>MOSFETs may not be suitable for multi-direction DC motor control (we believe we have a workaround for this for the time being).</li>
+<li>The controller may not have the voltage or current to drive the MOSFET gates.</li>
+</ul>
+<p>On the plus side, there are a few benefits to getting the board manufactured at this stage:</p>
+<ul>
+<li>Validate auto-routing process</li>
+<li>Validate basic circuit properties</li>
+<li>Make sure the dimensions are correct for the motor housing</li>
+<li>Figure out if the support circuitry is sufficient to support the controller</li>
+<li>Ensure PCB holes are of the correct size for wire gauge and chosen connectors</li>
+<li>Test the upper current limit of PCB traces (specifically power traces)</li>
+<li>Test chaining multiple motors together to ensure the signal doesn’t degrade (distance and number of motors may be a problem)</li>
+<li>Mini-PCB business cards!</li>
+<li>Funding justification (“look, we’re making cool stuff!”)</li>
+</ul>
+<p>There are probably many other pieces of validation that can be achieved before sending the next batch off.</p>
+<figure>
+<img src="2021-04-26/man-render-front.jpg" alt="" /><figcaption>Manufacturer’s front rendering</figcaption>
+</figure>
+<figure>
+<img src="2021-04-26/man-render-back.jpg" alt="" /><figcaption>Manufacturer’s rear rendering</figcaption>
+</figure>
+<p>The boards were sent off soon after the last update and we expect these to arrive soon after this update. We can then begin the task of validating that every part is correctly electrically connected and disconnected as appropriate.</p>
+<p>Check back regularly for further updates!</p>
+</body>
+</html>]]></description>
+  </item>
+  <item>
+    <title>Project - PWM Motor (Part 3)</title>
+    <link>https://humanoid.science/blg/2021-04-18.html</link>
+    <description><![CDATA[<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="keywords" content="Electric, Sheep, RoboCup, Humanoid" />
+  <title>Electric Sheep</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <link rel="stylesheet" href="/media/dan/DATA/Documents/Projects/nz-dev/website/www/style.css" />
+</head>
+<body>
+<p><img src="/img/logo-walk.gif" /></p>
+<ul class="n">
+<li class="n">
+<a class="n" href="/index.html#">Home</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#blogs">Blogs</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#about-team">About Team</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#team-members">Team Members</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#achievements">Achievements</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#releases">Releases</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#press">Press</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#contact-us">Contact Us</a>
+</li>
+<li class="n">
+<a class="n" href="/rss.xml">RSS</a>
+</li>
+</ul>
+<header id="title-block-header">
+<h1 class="title">Electric Sheep</h1>
+</header>
+<h2 id="project---pwm-motor-part-3">Project - PWM Motor (Part 3)</h2>
+<p><code>Last Modfified: 2021-04-18</code></p>
+<p>Following up from <a href="/blg/2021-04-12.html">last week</a>, there have been a few more updates! Progress on the low-cost motor controller are going well.</p>
+<p>The software control has essentially gone as far as it can without real hardware to test with. We have basic functionality for PING, READ and WRITE of motor values. We are able to read the motor position, but are not able to control the motor due to the legacy MOSFET circuitry. Some new, more powerful MOSFETs have been ordered and are on their way.</p>
+<p>The bugs with the software control have been hunted down - in the end it turned out that <code>0x00</code> and <code>0x0A</code> bytes break the serial USB protocol for a yet to be determined reason. This is not a problem for the real serial interface we will use, as this has no such software limitations.</p>
+<figure>
+<img src="2021-04-18/pcb-layout.png" alt="" /><figcaption>Kicad PCB layout</figcaption>
+</figure>
+<p>As you can see, progress has been made on the PCB for the new motor controller, with the basic circuitry now planned. We have been using <a href="https://xess.com/skidl">skidl</a> for programmatically generating and validating circuits - and then using Kicad to place the components. After this we then use <a href="https://github.com/freerouting/freerouting">freerouting</a> to automate the routing process between the components.</p>
+<figure>
+<img src="2021-04-18/front-render.png" alt="" /><figcaption>3D render of top</figcaption>
+</figure>
+<p>Packing all the components onto a single 2-layer PCB has been quite tough, with both sides being jam packed to fit within the profile of the existing motor chassis. It’s only <em>just about</em> even possible! There are still some challenges to be solved before the PCB can be sent off to a manufacturer, but it’s expected this could happen as early as next week.</p>
+<p>As you can see, very important sheep art was also added to the PCB!</p>
+<figure>
+<img src="2021-04-18/rear-render.png" alt="" /><figcaption>3D render of back</figcaption>
+</figure>
+<p>We look forward to providing more updates in the near future!</p>
+</body>
+</html>]]></description>
+  </item>
+  <item>
+    <title>Project - PWM Motor (Part 2)</title>
+    <link>https://humanoid.science/blg/2021-04-12.html</link>
+    <description><![CDATA[<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="keywords" content="Electric, Sheep, RoboCup, Humanoid" />
+  <title>Electric Sheep</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <link rel="stylesheet" href="/media/dan/DATA/Documents/Projects/nz-dev/website/www/style.css" />
+</head>
+<body>
+<p><img src="/img/logo-walk.gif" /></p>
+<ul class="n">
+<li class="n">
+<a class="n" href="/index.html#">Home</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#blogs">Blogs</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#about-team">About Team</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#team-members">Team Members</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#achievements">Achievements</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#releases">Releases</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#press">Press</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#contact-us">Contact Us</a>
+</li>
+<li class="n">
+<a class="n" href="/rss.xml">RSS</a>
+</li>
+</ul>
+<header id="title-block-header">
+<h1 class="title">Electric Sheep</h1>
+</header>
+<h2 id="project---pwm-motor-part-2">Project - PWM Motor (Part 2)</h2>
+<p><code>Last Modfified: 2021-04-12</code></p>
+<p>Following up from the motor project described <a href="/blg/2021-04-04.html">last week</a>, we have begun the process of programming the initial prototype device. As previously mentioned, the controller is to be based on the very low-cost 8-bit ATtiny85 controller.</p>
+<p>In the previous blog we showed pictures of the Digispark controller wired up, which then got blown up, but has since been resurrected. We intend to continue working on the hardware now that the software has been proven out more reliably.</p>
+<p>As you may or may not be aware, the controller, whilst being cheap and offering nice interfaces, is extremely resource constrained. We have just 6kB of storage to work with, which must contain the USB serial interface and motor protocol encoding/decoding, as well as all other features - of which we currently use approximately 4kB. We also have just 512 bytes of RAM, which we currently use 355 bytes of.</p>
+<figure>
+<img src="2021-04-12/protocol-testing.png" alt="" /><figcaption>Testing PING, READ and WRITE functionality</figcaption>
+</figure>
+<p>In the above image you can see the initial implementation of our motor control protocol, as well as the initial (dumb) debug tools to ensure the raw packets are as expected. You can see the build process is also built on top of <code>arduino-cli</code>, meaning that the firmware is really easy to write and for others to experiment with.</p>
+<p>Part of the process has been in documenting the motor modification, including the reverse engineering process, build environment, design, initial prototype and the protocol.</p>
+<figure>
+<img src="2021-04-12/documentation.png" alt="" /><figcaption>Initial project documentation</figcaption>
+</figure>
+<p>Stay tuned! Subscribe to the RSS feed for future updates and check back regularly!</p>
+</body>
+</html>]]></description>
+  </item>
+  <item>
+    <title>Project - PWM Motor</title>
+    <link>https://humanoid.science/blg/2021-04-04.html</link>
+    <description><![CDATA[<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="keywords" content="Electric, Sheep, RoboCup, Humanoid" />
+  <title>Electric Sheep</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <link rel="stylesheet" href="/media/dan/DATA/Documents/Projects/nz-dev/website/www/style.css" />
+</head>
+<body>
+<p><img src="/img/logo-walk.gif" /></p>
+<ul class="n">
+<li class="n">
+<a class="n" href="/index.html#">Home</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#blogs">Blogs</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#about-team">About Team</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#team-members">Team Members</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#achievements">Achievements</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#releases">Releases</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#press">Press</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#contact-us">Contact Us</a>
+</li>
+<li class="n">
+<a class="n" href="/rss.xml">RSS</a>
+</li>
+</ul>
+<header id="title-block-header">
+<h1 class="title">Electric Sheep</h1>
+</header>
+<h2 id="project---pwm-motor">Project - PWM Motor</h2>
+<p><code>Last Modfified: 2021-04-04</code></p>
+<p>The team embark on a new project towards creating open source motors, looking to initially modify the very popular MG996R PWM motor to have a custom controller board. The intention is to run this low power 11kg/cm motor at a higher voltage and to implement a serial-based motor control protocol.</p>
+<p><em>Why use an existing motor?</em> A while back we experimented building our own gears, but the tolerances required are quite high - something we would need to manufacture. In turn, all of the cost savings are lost. We therefore decided to bypass this problem by implementing our own motor controller into an existing motor platform.</p>
+<p>If our experiments are successful, even a low power motor controller via serial could be useful for the head. We can then apply the same methodology to larger motors. The intention will be to open source our drop-in replacement controller and the source code, so that the entire community can benefit.</p>
+<figure>
+<img src="2021-04-04/IMG_20210404_133711.jpg" alt="" /><figcaption>MG996R with original controller</figcaption>
+</figure>
+<p>As seen in the pictures, we have begun hacking on the MG996R. The intention is to run the motor with the existing gears, DC motor and driver transistors - but controller via the very capable ATtiny85. This has just enough pins to support the serial communications, motor positioning and a temperature sensor.</p>
+<p>To allow for easier programming, we will use the Digispark controller, which allows for programming via the Arduino IDE. This little controller will happily churp at 16MHz, which should offer enough speed to do PID and perhaps other cool algorithms.</p>
+<figure>
+<img src="2021-04-04/IMG_20210404_133651.jpg" alt="" /><figcaption>MG996R with Digispark controller</figcaption>
+</figure>
+<p>We will keep you updated on this project, so please check back regularly or subscribe to the RSS feed. Thanks for reading!</p>
+</body>
+</html>]]></description>
+  </item>
+  <item>
+    <title>Update - Walk Test</title>
+    <link>https://humanoid.science/blg/2020-03-08.html</link>
+    <description><![CDATA[<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="keywords" content="Electric, Sheep, RoboCup, Humanoid" />
+  <title>Electric Sheep</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <link rel="stylesheet" href="/media/dan/DATA/Documents/Projects/nz-dev/website/www/style.css" />
+</head>
+<body>
+<p><img src="/img/logo-walk.gif" /></p>
+<ul class="n">
+<li class="n">
+<a class="n" href="/index.html#">Home</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#blogs">Blogs</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#about-team">About Team</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#team-members">Team Members</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#achievements">Achievements</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#releases">Releases</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#press">Press</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#contact-us">Contact Us</a>
+</li>
+<li class="n">
+<a class="n" href="/rss.xml">RSS</a>
+</li>
+</ul>
+<header id="title-block-header">
+<h1 class="title">Electric Sheep</h1>
+</header>
+<h2 id="update---walk-test">Update - Walk Test</h2>
+<p><code>Last Modfified: 2020-03-08</code></p>
+<iframe src="https://www.youtube.com/embed/h1NREMxQ0wc" allowfullscreen>
+</iframe>
+<p>This video was recorded just before our second qualification submission deadline, which shows the results of the work from the previous two updates. Here we show the robot walking with the new kinematic model, new motors and adjusted walk engine. As you can see, without balance correction there is beginning to be some stability.</p>
+</body>
+</html>]]></description>
+  </item>
+  <item>
+    <title>Update - Leg Build</title>
+    <link>https://humanoid.science/blg/2020-01-30.html</link>
+    <description><![CDATA[<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="keywords" content="Electric, Sheep, RoboCup, Humanoid" />
+  <title>Electric Sheep</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <link rel="stylesheet" href="/media/dan/DATA/Documents/Projects/nz-dev/website/www/style.css" />
+</head>
+<body>
+<p><img src="/img/logo-walk.gif" /></p>
+<ul class="n">
+<li class="n">
+<a class="n" href="/index.html#">Home</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#blogs">Blogs</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#about-team">About Team</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#team-members">Team Members</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#achievements">Achievements</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#releases">Releases</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#press">Press</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#contact-us">Contact Us</a>
+</li>
+<li class="n">
+<a class="n" href="/rss.xml">RSS</a>
+</li>
+</ul>
+<header id="title-block-header">
+<h1 class="title">Electric Sheep</h1>
+</header>
+<h2 id="update---leg-build">Update - Leg Build</h2>
+<p><code>Last Modfified: 2020-01-30</code></p>
+<iframe src="https://www.youtube.com/embed/0NUDcCf817E" allowfullscreen>
+</iframe>
+<p>This video update is a continuation from the previous update, where we designed new robot legs. In this update we show the printed result after a week of printing, including the cleaning process and the robot assembly. This is part of a body of work that is to prepare our robot for walking on artificial grass.</p>
+</body>
+</html>]]></description>
+  </item>
+  <item>
+    <title>Update - Leg Design</title>
+    <link>https://humanoid.science/blg/2020-01-29.html</link>
+    <description><![CDATA[<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="keywords" content="Electric, Sheep, RoboCup, Humanoid" />
+  <title>Electric Sheep</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <link rel="stylesheet" href="/media/dan/DATA/Documents/Projects/nz-dev/website/www/style.css" />
+</head>
+<body>
+<p><img src="/img/logo-walk.gif" /></p>
+<ul class="n">
+<li class="n">
+<a class="n" href="/index.html#">Home</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#blogs">Blogs</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#about-team">About Team</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#team-members">Team Members</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#achievements">Achievements</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#releases">Releases</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#press">Press</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#contact-us">Contact Us</a>
+</li>
+<li class="n">
+<a class="n" href="/rss.xml">RSS</a>
+</li>
+</ul>
+<header id="title-block-header">
+<h1 class="title">Electric Sheep</h1>
+</header>
+<h2 id="update---leg-design">Update - Leg Design</h2>
+<p><code>Last Modfified: 2020-01-30</code></p>
+<iframe src="https://www.youtube.com/embed/8q2y71lh5Kk" allowfullscreen>
+</iframe>
+<p>In this video update we show a quick overview on our design process for upgrading the leg motors and increasing the movement in the models. In our previous design, the motors were too weak for proper robot walking and the movement made getting up from a fallen state quite difficult. To overcome this, we have upgraded from Feetech SM30s to Feetech SM40BLs, which offer 40kg/cm from the previous 30kg/cm (which we tested). Other improvements include better gearing, increased accuracy, less overheating and better build quality.</p>
+</body>
+</html>]]></description>
+  </item>
+  <item>
+    <title>Qualification 2020 Preparation</title>
+    <link>https://humanoid.science/blg/2019-10-20.html</link>
+    <description><![CDATA[<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="keywords" content="Electric, Sheep, RoboCup, Humanoid" />
+  <title>Electric Sheep</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <link rel="stylesheet" href="/media/dan/DATA/Documents/Projects/nz-dev/website/www/style.css" />
+</head>
+<body>
+<p><img src="/img/logo-walk.gif" /></p>
+<ul class="n">
+<li class="n">
+<a class="n" href="/index.html#">Home</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#blogs">Blogs</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#about-team">About Team</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#team-members">Team Members</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#achievements">Achievements</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#releases">Releases</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#press">Press</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#contact-us">Contact Us</a>
+</li>
+<li class="n">
+<a class="n" href="/rss.xml">RSS</a>
+</li>
+</ul>
+<header id="title-block-header">
+<h1 class="title">Electric Sheep</h1>
+</header>
+<h2 id="qualification-2020-preparation">Qualification 2020 Preparation</h2>
+<p><code>Last Modfified: 2019-10-20</code></p>
+<p>This blog update is to provide a simplistic overview of what is required for qualification - more information can be found on the official <a href="https://mailman.cc.gatech.edu/pipermail/robocup-humanoid/2019/001546.html">mailing list</a>.</p>
+<h3 id="what-is-qualification">What Is Qualification?</h3>
+<p>The purpose of the qualification stage is to filter for the best teams to participate in the competition. This is to ensure a basic level of competence, so that games are interesting and teams are able to play. In order to compete at the competition, teams must pass the qualification process.</p>
+<p>At the competition itself, the robots are inspected to ensure compliance with the rules - so even after qualification, participation is not guaranteed. As well as checking the robot dimensions and limb manoeuvrability, robots must also demonstrate the ability to get up from a fall in both the frontwards and backwards orientations.</p>
+<h3 id="how-do-you-qualify">How Do You Qualify?</h3>
+<p>Teams must provide several formal pieces of information in order to be considered:</p>
+<ul>
+<li><strong>Team Data</strong> - This consists of the basic team information, such as a name, website and contact details.</li>
+<li><strong>Robot Video</strong> - The video needs to demonstrate the robot finding a ball, walking towards a ball, positioning for a kick, kicking towards a goal and getting up from a fallen state.</li>
+<li><strong>Software Description</strong> - This is a series of questions about the code, specifically the walking, vision, localization, communication, behaviour and contributions made.</li>
+<li><strong>Extended Abstract</strong> - Two page of details about upgrades since the previous year and what makes the robot team great.</li>
+<li><strong>Letter Of Commitement</strong> - This is a signed letter by each team leader to say they will do their duties to help the competition run smoothly.</li>
+<li><strong>Robot Specification</strong> - One page overview of the robot hardware.</li>
+</ul>
+<h3 id="deadlines-announced">Deadlines Announced</h3>
+<p>The technical committee have sent out the following deadlines:</p>
+<ul>
+<li>Submission system open: <em>November 18th, 2019</em></li>
+<li>Deadline for submission: <em>December 2nd, 2019</em></li>
+<li>Announcement of qualified teams: <em>January 20th, 2020</em></li>
+</ul>
+<h3 id="plan-of-action">Plan Of Action</h3>
+<p>Over the next few months, we hope to provide some details in a series of blogs about what our team gets up to leading to the qualification deadline.</p>
+</body>
+</html>]]></description>
+  </item>
+  <item>
+    <title>Qualification 2019</title>
+    <link>https://humanoid.science/blg/2018-12-06.html</link>
+    <description><![CDATA[<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="keywords" content="Electric, Sheep, RoboCup, Humanoid" />
+  <title>Electric Sheep</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <link rel="stylesheet" href="/media/dan/DATA/Documents/Projects/nz-dev/website/www/style.css" />
+</head>
+<body>
+<p><img src="/img/logo-walk.gif" /></p>
+<ul class="n">
+<li class="n">
+<a class="n" href="/index.html#">Home</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#blogs">Blogs</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#about-team">About Team</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#team-members">Team Members</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#achievements">Achievements</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#releases">Releases</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#press">Press</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#contact-us">Contact Us</a>
+</li>
+<li class="n">
+<a class="n" href="/rss.xml">RSS</a>
+</li>
+</ul>
+<header id="title-block-header">
+<h1 class="title">Electric Sheep</h1>
+</header>
+<h2 id="qualification-2019">Qualification 2019</h2>
+<p><code>Last Modfified: 2018-12-06</code></p>
+<p>It certainly has been a busy few months! We’ve gone from some <a href="hardware.html">hardware on a desk</a>, all the way to proudly presenting our first platform, <em>Black Sheep</em>. Other than being sheep related, it’s also a platform that will likely never feel the field under it’s feet as we plan to have several more iterations over the next six months, in preparation for the world cup.</p>
+<p>Our changes come in many part to the hardware and software: some fixes, some improvements and some feature implementations. In the next month or so we prioritize the fixes and improvements to our humanoid platform.</p>
+<p>Our qualification video:</p>
+<iframe src="https://www.youtube.com/embed/vP87CayUrcw" allowfullscreen>
+</iframe>
+<p>You may also view our <a href="/bin/tdp.pdf">team description paper</a> and the <a href="/bin/specs.pdf">robot specification</a> for an in depth discussion about where we are and where we’re going.</p>
+<p>Stay tuned for more updates!</p>
+</body>
+</html>]]></description>
+  </item>
+  <item>
+    <title>Hardware</title>
+    <link>https://humanoid.science/blg/2018-06-03.html</link>
+    <description><![CDATA[<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="keywords" content="Electric, Sheep, RoboCup, Humanoid" />
+  <title>Electric Sheep</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <link rel="stylesheet" href="/media/dan/DATA/Documents/Projects/nz-dev/website/www/style.css" />
+</head>
+<body>
+<p><img src="/img/logo-walk.gif" /></p>
+<ul class="n">
+<li class="n">
+<a class="n" href="/index.html#">Home</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#blogs">Blogs</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#about-team">About Team</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#team-members">Team Members</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#achievements">Achievements</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#releases">Releases</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#press">Press</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#contact-us">Contact Us</a>
+</li>
+<li class="n">
+<a class="n" href="/rss.xml">RSS</a>
+</li>
+</ul>
+<header id="title-block-header">
+<h1 class="title">Electric Sheep</h1>
+</header>
+<h2 id="hardware">Hardware</h2>
+<p><code>Last Modfified: 2018-06-03</code></p>
+<p>A quick message from our team since the last blog update - progress is good! Much has happened since our last blog, we’ll only cover a few of the highlights here.</p>
+<p>Much of the hardware has arrived, including various motors, parts for power supplies and much more. We’re still waiting on some straggling parts but we expect those to arrive soon. See some of the images of the selected parts below:</p>
+<figure>
+<img src="2018-06-03/power.jpg" alt="" /><figcaption>Some of the power supply parts</figcaption>
+</figure>
+<figure>
+<img src="2018-06-03/motors.jpg" alt="" /><figcaption>The range of motors</figcaption>
+</figure>
+<p>3D printing is also well under way, with us slowly going from design to real-life models. It’s nice to see a design go from this:</p>
+<figure>
+<img src="2018-06-03/mike.jpg" alt="" /><figcaption>Monsters, Inc - 2001, Disney &amp; Pixar</figcaption>
+</figure>
+<p>To this:</p>
+<figure>
+<img src="2018-06-03/model.png" alt="" /><figcaption>3D model of head</figcaption>
+</figure>
+<p>To this:</p>
+<figure>
+<img src="2018-06-03/print.jpg" alt="" /><figcaption>3D print of head</figcaption>
+</figure>
+<p>In our next updates, we plan to provide details on:</p>
+<ul>
+<li>3D modelling of motors</li>
+<li>3D modelling of chassis</li>
+<li>3D printing of these various parts</li>
+<li>Our initial approach to vision</li>
+<li>Interfacing with the hardware motors</li>
+</ul>
+<p>Stay tuned for our next update.</p>
+</body>
+</html>]]></description>
+  </item>
+  <item>
+    <title>Funding</title>
+    <link>https://humanoid.science/blg/2018-02-12.html</link>
+    <description><![CDATA[<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="keywords" content="Electric, Sheep, RoboCup, Humanoid" />
+  <title>Electric Sheep</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <link rel="stylesheet" href="/media/dan/DATA/Documents/Projects/nz-dev/website/www/style.css" />
+</head>
+<body>
+<p><img src="/img/logo-walk.gif" /></p>
+<ul class="n">
+<li class="n">
+<a class="n" href="/index.html#">Home</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#blogs">Blogs</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#about-team">About Team</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#team-members">Team Members</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#achievements">Achievements</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#releases">Releases</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#press">Press</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#contact-us">Contact Us</a>
+</li>
+<li class="n">
+<a class="n" href="/rss.xml">RSS</a>
+</li>
+</ul>
+<header id="title-block-header">
+<h1 class="title">Electric Sheep</h1>
+</header>
+<h2 id="funding">Funding</h2>
+<p><code>Last Modfified: 2018-09-22</code></p>
+<p>We are happy to announce that we have been awarded funds to establish a RoboCup team by the University of Canterbury’s College of Engineering, for the purpose of purchasing three robots and a practice environment. It is our hope that over the next year we will be able to successfully build a humanoid platform and compete in RoboCup 2019, hosted in Australia <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> <a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> <a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> <a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a>.</p>
+<p>It is our hope to establish a strong robotics team and compete in this prestigious event, allowing us to showcase the recent advancements in robotics out of the labs and add to these ourselves. New Zealand has great potential for robots in many applications, including agriculture, search &amp; rescue and autonomous vehicles as just a few examples.</p>
+<p>The RoboCup competition is a particularly exciting opportunity, bringing talent from around the world to compete in one of the next big steps in robotics, requiring multiple disciplines to come together in order to achieve this great task. This ambitious goal has been globally sponsored by big names such as Flower Robotics, SoftBank Robotics, Festo and MathWorks - as well as being partnered with the IEEE Robotic and Automation Society <a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a>.</p>
+<h3 id="references">References</h3>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>Site: <a href="https://www.engineering.unsw.edu.au/news/australia-faces-robot-invasion-in-2019-0">https://www.engineering.unsw.edu.au/news/australia-faces-robot-invasion-in-2019-0</a><a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>Site: <a href="https://www.sporttechie.com/robocup-2019-sydney-will-worlds-biggest-annual-competitive-robotics-event/">https://www.sporttechie.com/robocup-2019-sydney-will-worlds-biggest-annual-competitive-robotics-event/</a><a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3" role="doc-endnote"><p>Site: <a href="http://event-profs.com/sydney-to-host-robocup-2019/">http://event-profs.com/sydney-to-host-robocup-2019/</a><a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4" role="doc-endnote"><p>Site: <a href="http://www.processonline.com.au/content/business/news/sydney-to-host-robocup-in-2-19-247220147">http://www.processonline.com.au/content/business/news/sydney-to-host-robocup-in-2-19-247220147</a><a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn5" role="doc-endnote"><p>Site: <a href="http://www.robocup.org/">http://www.robocup.org/</a><a href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+</body>
+</html>]]></description>
+  </item>
+</channel>
+</rss>

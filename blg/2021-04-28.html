@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="keywords" content="Electric, Sheep, RoboCup, Humanoid" />
+  <title>Electric Sheep</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <link rel="stylesheet" href="/media/dan/DATA/Documents/Projects/nz-dev/website/www/style.css" />
+</head>
+<body>
+<p><img src="/img/logo-walk.gif" /></p>
+<ul class="n">
+<li class="n">
+<a class="n" href="/index.html#">Home</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#blogs">Blogs</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#about-team">About Team</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#team-members">Team Members</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#achievements">Achievements</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#releases">Releases</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#press">Press</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#contact-us">Contact Us</a>
+</li>
+<li class="n">
+<a class="n" href="/rss.xml">RSS</a>
+</li>
+</ul>
+<header id="title-block-header">
+<h1 class="title">Electric Sheep</h1>
+</header>
+<h2 id="torso-design">Torso Design</h2>
+<p><code>Last Modfified: 2021-04-28</code></p>
+<p>Due to the ongoing COVID situation things have been a little different last year and this year, with teams having to adapt and work remotely. One of the many benefits of living in New Zealand has been the successful quarantine measures, meaning the team has been able to continue to meet on a regular basis.</p>
+<p>This year the competition will be virtual, and as such, has allowed us a unique opportunity to improve the humanoid and go after harder to reach goals. One of these investments has been a computation-based redesign of the humanoid structure.</p>
+<figure>
+<img src="2021-04-28/torso-scad.png" alt="" /><figcaption>OpenSCAD torso design</figcaption>
+</figure>
+<p>The original torso was coded by hand in OpenSCAD, a language to define 3D shapes. This got us to the competition in Sydney, Australia 2019, but was far from perfect. It was heavy, weak, hard to work on (you had to break the torso apart to rewire it), didn’t allow for great manoeuvrability - and a long list of other problems.</p>
+<p>Great work was done to port the models into a 3D CAD software and they were incrementally improved, smoothed, strengthened and redesigned. These parts were far superior to the original parts, but required many more hours of work to make even small adjustments.</p>
+<p>This got us thinking: <em>What if we could get a computer to do all the work?</em></p>
+<figure>
+<img src="2021-04-28/torso-v8.JPG" alt="" /><figcaption>Torso definition</figcaption>
+</figure>
+<p>The idea is that we define a set of rules for the 3D model and let the computer design the torso for us. This method is called <a href="https://en.wikipedia.org/wiki/Generative_Design"><em>generative design</em></a> and various CAD solutions have been around for years, with it only recently becoming accessible for free on a student license.</p>
+<figure>
+<img src="2021-04-28/torso-v2.JPG" alt="" /><figcaption>Torso design</figcaption>
+</figure>
+<p>As you can see, some of the design outputs are much harder-edged and others look much more organic.</p>
+<figure>
+<img src="2021-04-28/torso-v3.JPG" alt="" /><figcaption>Another torso design</figcaption>
+</figure>
+<p>Some of these designs are getting increasingly more human-like!</p>
+<p>Clearly more work is needed in order to better define restrictions to the models, it’s not usually used for objects with such complexity. We do believe however that the initial results are very promising and there could well be a viable path forwards with this approach.</p>
+<figure>
+<img src="2021-04-28/torso-v7.JPG" alt="" /><figcaption>And another</figcaption>
+</figure>
+<p>Subscribe to the RSS feed for further updates!</p>
+</body>
+</html>

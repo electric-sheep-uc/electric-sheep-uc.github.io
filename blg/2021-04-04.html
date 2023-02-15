@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="keywords" content="Electric, Sheep, RoboCup, Humanoid" />
+  <title>Electric Sheep</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <link rel="stylesheet" href="/media/dan/DATA/Documents/Projects/nz-dev/website/www/style.css" />
+</head>
+<body>
+<p><img src="/img/logo-walk.gif" /></p>
+<ul class="n">
+<li class="n">
+<a class="n" href="/index.html#">Home</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#blogs">Blogs</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#about-team">About Team</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#team-members">Team Members</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#achievements">Achievements</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#releases">Releases</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#press">Press</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#contact-us">Contact Us</a>
+</li>
+<li class="n">
+<a class="n" href="/rss.xml">RSS</a>
+</li>
+</ul>
+<header id="title-block-header">
+<h1 class="title">Electric Sheep</h1>
+</header>
+<h2 id="project---pwm-motor">Project - PWM Motor</h2>
+<p><code>Last Modfified: 2021-04-04</code></p>
+<p>The team embark on a new project towards creating open source motors, looking to initially modify the very popular MG996R PWM motor to have a custom controller board. The intention is to run this low power 11kg/cm motor at a higher voltage and to implement a serial-based motor control protocol.</p>
+<p><em>Why use an existing motor?</em> A while back we experimented building our own gears, but the tolerances required are quite high - something we would need to manufacture. In turn, all of the cost savings are lost. We therefore decided to bypass this problem by implementing our own motor controller into an existing motor platform.</p>
+<p>If our experiments are successful, even a low power motor controller via serial could be useful for the head. We can then apply the same methodology to larger motors. The intention will be to open source our drop-in replacement controller and the source code, so that the entire community can benefit.</p>
+<figure>
+<img src="2021-04-04/IMG_20210404_133711.jpg" alt="" /><figcaption>MG996R with original controller</figcaption>
+</figure>
+<p>As seen in the pictures, we have begun hacking on the MG996R. The intention is to run the motor with the existing gears, DC motor and driver transistors - but controller via the very capable ATtiny85. This has just enough pins to support the serial communications, motor positioning and a temperature sensor.</p>
+<p>To allow for easier programming, we will use the Digispark controller, which allows for programming via the Arduino IDE. This little controller will happily churp at 16MHz, which should offer enough speed to do PID and perhaps other cool algorithms.</p>
+<figure>
+<img src="2021-04-04/IMG_20210404_133651.jpg" alt="" /><figcaption>MG996R with Digispark controller</figcaption>
+</figure>
+<p>We will keep you updated on this project, so please check back regularly or subscribe to the RSS feed. Thanks for reading!</p>
+</body>
+</html>

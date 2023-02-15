@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="keywords" content="Electric, Sheep, RoboCup, Humanoid" />
+  <title>Electric Sheep</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <link rel="stylesheet" href="/media/dan/DATA/Documents/Projects/nz-dev/website/www/style.css" />
+</head>
+<body>
+<p><img src="/img/logo-walk.gif" /></p>
+<ul class="n">
+<li class="n">
+<a class="n" href="/index.html#">Home</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#blogs">Blogs</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#about-team">About Team</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#team-members">Team Members</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#achievements">Achievements</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#releases">Releases</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#press">Press</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#contact-us">Contact Us</a>
+</li>
+<li class="n">
+<a class="n" href="/rss.xml">RSS</a>
+</li>
+</ul>
+<header id="title-block-header">
+<h1 class="title">Electric Sheep</h1>
+</header>
+<h2 id="project---pwm-motor-part-2">Project - PWM Motor (Part 2)</h2>
+<p><code>Last Modfified: 2021-04-12</code></p>
+<p>Following up from the motor project described <a href="/blg/2021-04-04.html">last week</a>, we have begun the process of programming the initial prototype device. As previously mentioned, the controller is to be based on the very low-cost 8-bit ATtiny85 controller.</p>
+<p>In the previous blog we showed pictures of the Digispark controller wired up, which then got blown up, but has since been resurrected. We intend to continue working on the hardware now that the software has been proven out more reliably.</p>
+<p>As you may or may not be aware, the controller, whilst being cheap and offering nice interfaces, is extremely resource constrained. We have just 6kB of storage to work with, which must contain the USB serial interface and motor protocol encoding/decoding, as well as all other features - of which we currently use approximately 4kB. We also have just 512 bytes of RAM, which we currently use 355 bytes of.</p>
+<figure>
+<img src="2021-04-12/protocol-testing.png" alt="" /><figcaption>Testing PING, READ and WRITE functionality</figcaption>
+</figure>
+<p>In the above image you can see the initial implementation of our motor control protocol, as well as the initial (dumb) debug tools to ensure the raw packets are as expected. You can see the build process is also built on top of <code>arduino-cli</code>, meaning that the firmware is really easy to write and for others to experiment with.</p>
+<p>Part of the process has been in documenting the motor modification, including the reverse engineering process, build environment, design, initial prototype and the protocol.</p>
+<figure>
+<img src="2021-04-12/documentation.png" alt="" /><figcaption>Initial project documentation</figcaption>
+</figure>
+<p>Stay tuned! Subscribe to the RSS feed for future updates and check back regularly!</p>
+</body>
+</html>

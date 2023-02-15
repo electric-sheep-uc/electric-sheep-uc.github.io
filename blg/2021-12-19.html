@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="keywords" content="Electric, Sheep, RoboCup, Humanoid" />
+  <title>Electric Sheep</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <link rel="stylesheet" href="/media/dan/DATA/Documents/Projects/nz-dev/website/www/style.css" />
+</head>
+<body>
+<p><img src="/img/logo-walk.gif" /></p>
+<ul class="n">
+<li class="n">
+<a class="n" href="/index.html#">Home</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#blogs">Blogs</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#about-team">About Team</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#team-members">Team Members</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#achievements">Achievements</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#releases">Releases</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#press">Press</a>
+</li>
+<li class="n">
+<a class="n" href="/index.html#contact-us">Contact Us</a>
+</li>
+<li class="n">
+<a class="n" href="/rss.xml">RSS</a>
+</li>
+</ul>
+<header id="title-block-header">
+<h1 class="title">Electric Sheep</h1>
+</header>
+<h2 id="general-update">General Update</h2>
+<p><code>Last Modfified: 2021-12-19</code></p>
+<p><em>What a year it has been!</em> In the months since we <a href="2021-05-16.html">last updated</a> you, a few things have happened for the team.</p>
+<h3 id="qualification">Qualification</h3>
+<p>The <a href="2019-10-20.html">last qualification submission</a> we submitted was in 2019<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> for an in-person competition for 2020, Bordeaux, France. Encase you have been hiding under a moon rock, that was <em>slightly</em> impacted by this <em>little-known</em> global pandemic event, and the in-person event was postponed till 2021. It may not be too much of a surprise to learn that in 2021 the situation could still not be described as ‘ideal’, and unfortunately the in-person event was postponed by a year again.</p>
+<p>The intention now is that for 2022, the <a href="https://2022.robocup.org/">competition be held in Bangkok, Thailand</a> - from the 11th to 17th of July. As the <a href="https://2022.robocup.org/covid-19-situation/">website states</a>, travelling during these times is far from easy and it’s yet to be seen how the travel restrictions change in response to the new Omicron variant.</p>
+<p>We are proud to announce our intention to collaborate with the <a href="https://robocup.herts.ac.uk/">Bold Hearts</a>, a well-established team from the UK. Dependant on travel restrictions, funding, personal commitments and some unforeseen issues, we intend to join them in the 2022 competition (and of course win!).</p>
+<iframe src="https://www.youtube.com/embed/xdqDjWm3Hfg" allowfullscreen>
+</iframe>
+<p>This somewhat addresses the issue of team members for each team and also reduces the funding requirement for our team.</p>
+<p><em>Fingers crossed for the qualification process!</em></p>
+<h3 id="projects">Projects</h3>
+<p>The following are some notes regarding ongoing projects, we intend to update these in more detail at a later date.</p>
+<h4 id="hardware">Hardware</h4>
+<p>The <a href="2021-05-01.html">PWM motor project</a> is currently on hold due to time constraints, but we intend to pick up this investigation soon. The possibility of a low-cost motor that we have a considerable amount of control over is quite exciting, especially as existing options have left a lot to be desired in terms of cost and performance!</p>
+<p>We intend to continue using our humanoid platform for the purpose of research, and as such will continue making upgrades. This includes continuing the investigation into the <a href="2021-04-28.html">torso structure</a>. The intention is that we can also use the lessons learned here in order to enhance the Bold Heart’s humanoid platform too.</p>
+<h4 id="balance-engine">Balance Engine</h4>
+<p>Something that we discussed in our original team description paper (TDP) for the 2019 competition in Sydney Australia, was our intention “<a href="/bin/tdp-2019-b.pdf">to experiment with specifying an end-target pose as an input <del>and</del> to a motion engine, which computes a pose for the next time step</a>”. In collaboration with the Bold Hearts we intend to implement the first step of this through the use of a <em>balance engine</em>, a subset of the <em>motion engine</em> problem space.</p>
+<figure>
+<img src="2021-12-19/scores.png" alt="" /><figcaption>Cartpole custom control algorithm</figcaption>
+</figure>
+<p>Initial results based on the <a href="https://gsurma.medium.com/cartpole-introduction-to-reinforcement-learning-ed0eb5b58288">‘cartpole’ problem</a> (essentially an inverse pendulum for testing non-linear control algorithms) have allowed us to validate some of the core concepts for this idea. It’s looking promising and we will likely be looking at exploring the control of a humanoid robot over Christmas.</p>
+<h4 id="vision">Vision</h4>
+<p>We intend to implement an iteration of our <a href="/bin/xyolo-2019.pdf">xYOLO CNN</a> in ROS2 that also detects field lines, and various other objects. The intention is that these can then play a large part in higher-level behaviour of the robot.</p>
+<figure>
+<img src="2021-12-19/predict.jpg" alt="" /><figcaption>xYOLO extended to predict other field objects</figcaption>
+</figure>
+<p>There are still some nice ideas for a version 2 of this network, time permitting we intend to investigate this space more. Since we published this paper, there have been two iterations of the original YOLO v3 named v4 and v5 - both of which feature some interesting work that can be applied to our network also.</p>
+<figure>
+<img src="2021-12-19/xYOLO.png" alt="" /><figcaption>Network structure of xYOLO</figcaption>
+</figure>
+<h4 id="localisation">Localisation</h4>
+<p>We also look towards investigating the localisation approach somewhat more starting in January now that we finally have features (lines, etc) that can be used for the localisation process. There are still some open problems yet to be solved, but we are relatively confident that we should be able to address these in time for the competition.</p>
+<h3 id="final-notes">Final Notes</h3>
+<p>The Electric Sheep wish everybody well, a Merry Christmas and a Happy New Year!</p>
+<p><em>Keep tuned for future updates!</em></p>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p><em>Yes, it really has been <strong>2 years</strong> since then!</em><a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+</body>
+</html>
